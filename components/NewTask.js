@@ -6,38 +6,33 @@ import {
   Modal,
   TouchableOpacity,
   TextInput,
-  Button,
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native'
+import DatePicker from './DatePicker'
+import TimePicker from './TimePicker'
 
 const NewTask = (props) => {
   const [title, setTitle] = useState('')
+  const [date, setDate] = useState(new Date())
+  const [time, setTime] = useState(new Date())
+  const [duration, setDuration] = useState(0)
   const [taskType, setTaskType] = useState('Other')
   return (
     <View style={{ display: 'flex' }}>
       <Modal visible={props.visible}>
-        <View style={styles.closeButtonContainer}>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => {
-              props.showNewTaskModal()
-              setTitle('')
-              setTaskType('Other')
-            }}>
-            <Text>X</Text>
-          </TouchableOpacity>
-        </View>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View>
-            <Text style={{ textAlign: 'center' }}>Add Title:</Text>
             <TextInput
               style={styles.textInput}
               value={title}
+              placeholder="Title of Event"
               onChangeText={(newTitle) => setTitle(newTitle)}
             />
           </View>
         </TouchableWithoutFeedback>
+        <DatePicker setDate={setDate} />
+        <TimePicker text="Time" setTime={setTime} />
         <View style={styles.typeButtonContainer}>
           <TouchableOpacity
             style={
@@ -60,33 +55,76 @@ const NewTask = (props) => {
             <Text>Other</Text>
           </TouchableOpacity>
         </View>
-        <Button
-          title="Submit"
-          onPress={() => {
-            props.addToTaskList({ title: title, category: taskType })
-            props.showNewTaskModal()
-            setTitle('')
-            setTaskType('Other')
-          }}
-        />
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              props.showNewTaskModal()
+              setTitle('')
+              setTaskType('Other')
+            }}>
+            <Text>Cancel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              if (
+                date.getDate() === new Date().getDate() &&
+                date.getMonth() === new Date().getMonth() &&
+                date.getFullYear() === new Date().getFullYear()
+              ) {
+                props.addToTaskList({ title: title, category: taskType })
+              }
+
+              props.addToWeeklyEventsList({
+                start: `${date.getFullYear()}-${
+                  date.getMonth() + 1
+                }-${date.getDate()} ${
+                  time.getHours() < 10 ? 0 : ''
+                }${time.getHours()}:${
+                  time.getMinutes() < 10 ? 0 : ''
+                }${time.getMinutes()}:00`,
+                duration: '00:20:00',
+                note: title,
+              })
+
+              const dateWithoutTime = `${date.getFullYear()}-${
+                date.getMonth() + 1
+              }-${date.getDate()}`
+
+              props.addToMarkedDates({
+                [dateWithoutTime]: {
+                  periods: [
+                    { startingDay: true, endingDay: true, color: 'blue' },
+                  ],
+                },
+              })
+
+              props.showNewTaskModal()
+              setTitle('')
+              setTaskType('Other')
+            }}>
+            <Text>OK</Text>
+          </TouchableOpacity>
+        </View>
       </Modal>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  closeButton: {
-    borderRadius: 100,
+  button: {
     backgroundColor: '#2196F3',
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 35,
     justifyContent: 'center',
     alignItems: 'center',
+    margin: 10,
   },
-  closeButtonContainer: {
+  buttonContainer: {
     flexDirection: 'row',
     margin: 20,
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
   typeButtonContainer: {
@@ -114,7 +152,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 40,
-    margin: 12,
+    margin: 20,
     borderWidth: 1,
     padding: 10,
   },

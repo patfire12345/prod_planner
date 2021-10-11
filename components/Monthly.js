@@ -1,11 +1,29 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import { Calendar } from 'react-native-calendars'
 
 const Monthly = (props) => {
+  useEffect(() => {
+    console.log(props.markedDates)
+  }, [props.markedDates])
+
   return (
     <View>
-      <Calendar />
+      <Calendar
+        markingType={'multi-period'}
+        // markedDates={{
+        //   '2021-10-11': {
+        //     periods: [
+        //       { startingDay: true, endingDay: false, color: 'blue' },
+        //       { startingDay: true, endingDay: false, color: 'black' },
+        //     ],
+        //   },
+        //   '2021-10-12': {
+        //     periods: [{ startingDay: true, endingDay: false, color: 'green' }],
+        //   },
+        // }}
+        markedDates={props.markedDates}
+      />
     </View>
   )
 }

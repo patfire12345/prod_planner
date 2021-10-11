@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import WeeklyCalendar from 'react-native-weekly-calendar'
 
 const Weekly = (props) => {
   return (
-    <View>
-      <WeeklyCalendar />
+    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+      <WeeklyCalendar events={props.weeklyEventsList} style={{}} />
     </View>
   )
 }

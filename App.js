@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Button,
   StyleSheet,
@@ -16,9 +16,11 @@ import Weekly from './components/Weekly'
 export default function App() {
   const [monthState, setMonthState] = useState(false)
   const [weekState, setWeekState] = useState(false)
-  const [dayState, setDayState] = useState(false)
+  const [dayState, setDayState] = useState(true)
   const [showNewTask, setShowNewTask] = useState(false)
   const [taskList, setTaskList] = useState([])
+  const [weeklyEventsList, setWeeklyEventsList] = useState([])
+  const [markedDates, setMarkedDates] = useState({})
 
   const showNewTaskModal = () => {
     setShowNewTask(!showNewTask)
@@ -28,10 +30,23 @@ export default function App() {
     setTaskList([...taskList, newTask])
   }
 
+  const addToWeeklyEventsList = (newEvent) => {
+    setWeeklyEventsList([...weeklyEventsList, newEvent])
+  }
+
+  const addToMarkedDates = (newMarkedDate) => {
+    setMarkedDates({ ...markedDates, ...newMarkedDate })
+  }
+
+  useEffect(() => {
+    setMonthState(false)
+    setWeekState(false)
+    setDayState(true)
+  }, [weeklyEventsList])
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}> Productivity Planner </Text>
-      {/* Add button, styling needs work */}
       <View style={styles.addButtonContainer}>
         <TouchableOpacity
           style={styles.addButton}
@@ -68,8 +83,8 @@ export default function App() {
             }}
           />
         </View>
-        {monthState && <Monthly />}
-        {weekState && <Weekly />}
+        {monthState && <Monthly markedDates={markedDates} />}
+        {weekState && <Weekly weeklyEventsList={weeklyEventsList} />}
         {dayState && <Daily taskList={taskList} />}
       </View>
 
@@ -77,6 +92,8 @@ export default function App() {
         visible={showNewTask}
         showNewTaskModal={showNewTaskModal}
         addToTaskList={addToTaskList}
+        addToWeeklyEventsList={addToWeeklyEventsList}
+        addToMarkedDates={addToMarkedDates}
       />
     </ScrollView>
   )

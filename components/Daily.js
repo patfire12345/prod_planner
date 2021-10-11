@@ -9,9 +9,8 @@ const Daily = (props) => {
       <Text style={styles.sectionTitle}>{Date()}</Text>
 
       <View style={styles.items}>
-        <Task title="Buy Groceries" category="school" />
-        {props.taskList.map((task) => (
-          <Task title={task.title} category={task.category} />
+        {props.taskList.map((task, index) => (
+          <Task title={task.title} category={task.category} key={index} />
         ))}
       </View>
     </View>
