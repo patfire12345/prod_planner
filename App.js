@@ -35,6 +35,9 @@ export default function App() {
   }
 
   const addToMarkedDates = (newMarkedDate) => {
+    // if (markedDates.hasOwnProperty(Object.keys(newMarkedDate)[0])) {
+    //   markedDates[Object.keys(newMarkedDate)[0]].periods
+    // }
     setMarkedDates({ ...markedDates, ...newMarkedDate })
   }
 

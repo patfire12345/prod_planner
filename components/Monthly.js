@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import { Calendar } from 'react-native-calendars'
 
 const Monthly = (props) => {
-  useEffect(() => {
-    console.log(props.markedDates)
-  }, [props.markedDates])
-
   return (
     <View>
       <Calendar

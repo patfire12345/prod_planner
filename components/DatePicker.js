@@ -12,7 +12,10 @@ const DatePicker = (props) => {
         onPress={() => {
           setOpen(true)
         }}>
-        <Text>Date</Text>
+        <Text style={styles.selectedText}>
+          {props.year}-{props.month}-{props.day}
+        </Text>
+        <Text style={styles.buttonText}>Date</Text>
       </TouchableOpacity>
       <DateTimePicker
         isVisible={open}
@@ -31,24 +34,28 @@ const DatePicker = (props) => {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#2196F3',
-    width: 50,
-    height: 35,
+    backgroundColor: 'transparent',
+    width: 250,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 10,
+    borderWidth: 1,
+    padding: 10,
   },
   buttonContainer: {
     flexDirection: 'row',
     margin: 20,
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     alignItems: 'center',
   },
-  textInput: {
-    height: 40,
-    margin: 20,
-    borderWidth: 1,
-    padding: 10,
+  buttonText: {
+    position: 'absolute',
+    color: 'grey',
+    top: 40,
+  },
+  selectedText: {
+    color: 'black',
+    fontWeight: 'bold',
   },
 })
 

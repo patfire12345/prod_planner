@@ -10,6 +10,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native'
 import DatePicker from './DatePicker'
+import Dropdown from './Dropdown'
 import TimePicker from './TimePicker'
 
 const NewTask = (props) => {
@@ -17,12 +18,16 @@ const NewTask = (props) => {
   const [date, setDate] = useState(new Date())
   const [time, setTime] = useState(new Date())
   const [duration, setDuration] = useState(0)
-  const [taskType, setTaskType] = useState('Other')
+  const [color, setColor] = useState('blue')
+
+  const [choseDuration, setChoseDuration] = useState(false)
+  const [choseColor, setChoseColor] = useState(false)
+
   return (
     <View style={{ display: 'flex' }}>
       <Modal visible={props.visible}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View>
+          <View style={styles.textInputContainer}>
             <TextInput
               style={styles.textInput}
               value={title}
@@ -31,49 +36,98 @@ const NewTask = (props) => {
             />
           </View>
         </TouchableWithoutFeedback>
-        <DatePicker setDate={setDate} />
-        <TimePicker text="Time" setTime={setTime} />
-        <View style={styles.typeButtonContainer}>
-          <TouchableOpacity
-            style={
-              taskType == 'School'
-                ? styles.typeButtonSelected
-                : styles.typeButtonUnselected
-            }
-            onPress={() => setTaskType('School')}>
-            <Text>School</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={
-              taskType == 'Other'
-                ? styles.typeButtonSelected
-                : styles.typeButtonUnselected
-            }
-            onPress={() => {
-              setTaskType('Other')
-            }}>
-            <Text>Other</Text>
-          </TouchableOpacity>
-        </View>
+
+        <DatePicker
+          year={date.getFullYear()}
+          month={date.getMonth() + 1}
+          day={date.getDate()}
+          setDate={setDate}
+        />
+        <TimePicker
+          hour={time.getHours()}
+          minute={
+            time.getMinutes() < 10
+              ? `0${time.getMinutes()}`
+              : `${time.getMinutes()}`
+          }
+          text="Time"
+          setTime={setTime}
+        />
+
+        <Dropdown
+          data={[0.5, 1, 1.5, 2, 2.5, 3]}
+          set={setDuration}
+          changeFlag={setChoseDuration}
+          defaultButtonText="Duration (Hours)"
+          buttonStyle={{
+            backgroundColor: 'transparent',
+            width: 250,
+            height: 40,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderWidth: 1,
+            padding: 10,
+          }}
+          buttonText={{
+            position: 'absolute',
+            color: 'grey',
+            fontSize: 14,
+            top: 25,
+            left: -190,
+          }}
+          isColor={false}
+        />
+
+        <Dropdown
+          data={['blue', 'red', 'yellow', 'green', 'orange', 'purple']}
+          set={setColor}
+          changeFlag={setChoseColor}
+          defaultButtonText="Colour"
+          buttonStyle={{
+            backgroundColor: 'transparent',
+            width: 40,
+            height: 40,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderWidth: 1,
+            padding: 10,
+          }}
+          buttonText={{
+            position: 'absolute',
+            color: 'grey',
+            fontSize: 14,
+            top: 25,
+            left: -60,
+          }}
+          isColor={true}
+        />
+
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
               props.showNewTaskModal()
               setTitle('')
-              setTaskType('Other')
             }}>
             <Text>Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.button}
+            disabled={!choseDuration || !choseColor}
+            style={
+              !choseDuration || !choseColor
+                ? styles.buttonDisabled
+                : styles.button
+            }
             onPress={() => {
               if (
                 date.getDate() === new Date().getDate() &&
                 date.getMonth() === new Date().getMonth() &&
                 date.getFullYear() === new Date().getFullYear()
               ) {
-                props.addToTaskList({ title: title, category: taskType })
+                props.addToTaskList({
+                  title: title,
+                  category: `${duration} hours`,
+                })
               }
 
               props.addToWeeklyEventsList({
@@ -84,7 +138,13 @@ const NewTask = (props) => {
                 }${time.getHours()}:${
                   time.getMinutes() < 10 ? 0 : ''
                 }${time.getMinutes()}:00`,
-                duration: '00:20:00',
+                duration: `${
+                  Math.floor(duration) < 10
+                    ? `${0}${Math.floor(duration)}`
+                    : Math.floor(duration)
+                }:${
+                  (duration * 60) % 60 === 0 ? '00' : (duration * 60) % 60
+                }:00`,
                 note: title,
               })
 
@@ -95,14 +155,18 @@ const NewTask = (props) => {
               props.addToMarkedDates({
                 [dateWithoutTime]: {
                   periods: [
-                    { startingDay: true, endingDay: true, color: 'blue' },
+                    { startingDay: true, endingDay: true, color: color },
                   ],
                 },
               })
 
               props.showNewTaskModal()
               setTitle('')
-              setTaskType('Other')
+              setDate(new Date())
+              setTime(new Date())
+              setChoseColor(false)
+              setChoseDuration(false)
+              setDuration(0)
             }}>
             <Text>OK</Text>
           </TouchableOpacity>
@@ -115,6 +179,14 @@ const NewTask = (props) => {
 const styles = StyleSheet.create({
   button: {
     backgroundColor: '#2196F3',
+    width: 50,
+    height: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 10,
+  },
+  buttonDisabled: {
+    backgroundColor: 'grey',
     width: 50,
     height: 35,
     justifyContent: 'center',
@@ -152,9 +224,17 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 40,
+    width: 200,
     margin: 20,
-    borderWidth: 1,
+    borderBottomWidth: 1,
     padding: 10,
+    textAlign: 'center',
+  },
+  textInputContainer: {
+    flexDirection: 'row',
+    padding: 20,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
 })
 
