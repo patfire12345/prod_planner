@@ -13,6 +13,7 @@ import Monthly from './components/Monthly'
 import NewTask from './components/NewTask'
 import Weekly from './components/Weekly'
 
+// head component of the application
 export default function App() {
   const [monthState, setMonthState] = useState(false)
   const [weekState, setWeekState] = useState(false)

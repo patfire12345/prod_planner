@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import Task from './Task'
 
+// Daily View
 const Daily = (props) => {
   return (
     <View>

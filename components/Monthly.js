@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import { Calendar } from 'react-native-calendars'
 
+// Monthly View
 const Monthly = (props) => {
   return (
     <View>

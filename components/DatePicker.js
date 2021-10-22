@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native'
 import DateTimePicker from 'react-native-modal-datetime-picker'
 
+// Component that allows specifically the Date to be chosen
 const DatePicker = (props) => {
   const [open, setOpen] = useState(false)
 

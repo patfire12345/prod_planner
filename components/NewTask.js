@@ -13,6 +13,7 @@ import DatePicker from './DatePicker'
 import Dropdown from './Dropdown'
 import TimePicker from './TimePicker'
 
+// Modal that creates a new task for the users
 const NewTask = (props) => {
   const [title, setTitle] = useState('')
   const [date, setDate] = useState(new Date())

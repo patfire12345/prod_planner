@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import SelectDropdown from 'react-native-select-dropdown'
 
+// Dropdown component mainly used in NewTask component
 const Dropdown = (props) => {
   return (
     <View style={styles.buttonContainer}>
@@ -15,24 +16,6 @@ const Dropdown = (props) => {
 
           return item
         }}
-        // buttonTextAfterSelection={(item, index) => {
-        //   return (
-        //     <Text key={`${index}-${item}`}>
-        //       {item} {props.unit}
-        //     </Text>
-        //   )
-        // }}
-        // rowTextForSelection={(item, index) => {
-        //   {
-        //     return (
-        //       !props.isColor && (
-        //         <Text key={`${index}-${item}`}>
-        //           {item} {props.unit}
-        //         </Text>
-        //       )
-        //     )
-        //   }
-        // }}
         renderCustomizedRowChild={(item, index) => {
           {
             return props.isColor ? (

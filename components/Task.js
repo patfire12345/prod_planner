@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 
+// Shows tasks in the Daily View (should rename)
 const Task = (props) => {
   return (
     <View style={styles.item}>
