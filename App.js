@@ -60,12 +60,29 @@ export default function App() {
     setWeeklyEventsList([...weeklyEventsList, newEvent])
   }
 
-  const addToMarkedDates = (newMarkedDate) => {
-    // if (markedDates.hasOwnProperty(Object.keys(newMarkedDate)[0])) {
-    //   markedDates[Object.keys(newMarkedDate)[0]].periods
+  const addToMarkedDates = (newMarkedDate, date, color) => {
+    if (date in markedDates) {
+      console.log('true')
+      markedDates[date].periods.push({
+        startingDay: true,
+        endingDay: true,
+        color: color,
+      })
+    } else {
+      console.log('false')
+      setMarkedDates({ ...markedDates, ...newMarkedDate })
+    }
+
+    // {
+    //   periods: [
+    //     { startingDay: true, endingDay: true, color: color },
+    //   ],
     // }
-    setMarkedDates({ ...markedDates, ...newMarkedDate })
   }
+
+  useEffect(() => {
+    console.log(markedDates)
+  }, [markedDates])
 
   useEffect(() => {
     setMonthState(false)
