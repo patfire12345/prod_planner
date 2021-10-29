@@ -72,12 +72,6 @@ export default function App() {
       console.log('false')
       setMarkedDates({ ...markedDates, ...newMarkedDate })
     }
-
-    // {
-    //   periods: [
-    //     { startingDay: true, endingDay: true, color: color },
-    //   ],
-    // }
   }
 
   useEffect(() => {
