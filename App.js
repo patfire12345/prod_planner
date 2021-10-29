@@ -23,6 +23,10 @@ export default function App() {
   const [weeklyEventsList, setWeeklyEventsList] = useState([])
   const [markedDates, setMarkedDates] = useState({})
 
+  const [dailyNewNote, setDailyNewNote] = useState('')
+  const [dailyNewNoteButtonPressed, setDailyNewNoteButtonPressed] =
+    useState(false)
+
   const showNewTaskModal = () => {
     setShowNewTask(!showNewTask)
   }
@@ -89,7 +93,15 @@ export default function App() {
         </View>
         {monthState && <Monthly markedDates={markedDates} />}
         {weekState && <Weekly weeklyEventsList={weeklyEventsList} />}
-        {dayState && <Daily taskList={taskList} />}
+        {dayState && (
+          <Daily
+            taskList={taskList}
+            dailyNewNote={dailyNewNote}
+            setDailyNewNote={setDailyNewNote}
+            dailyNewNoteButtonPressed={dailyNewNoteButtonPressed}
+            setDailyNewNoteButtonPressed={setDailyNewNoteButtonPressed}
+          />
+        )}
       </View>
 
       <NewTask
