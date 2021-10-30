@@ -62,21 +62,15 @@ export default function App() {
 
   const addToMarkedDates = (newMarkedDate, date, color) => {
     if (date in markedDates) {
-      console.log('true')
       markedDates[date].periods.push({
         startingDay: true,
         endingDay: true,
         color: color,
       })
     } else {
-      console.log('false')
       setMarkedDates({ ...markedDates, ...newMarkedDate })
     }
   }
-
-  useEffect(() => {
-    console.log(markedDates)
-  }, [markedDates])
 
   useEffect(() => {
     setMonthState(false)
@@ -88,6 +82,7 @@ export default function App() {
     getData().then((keyValuePairArray) => {
       let tempDailyTaskList = []
       let tempWeeklyEventsList = []
+      let tempMarkedDates = {}
       keyValuePairArray.map((keyValuePair, index) => {
         let jsonKeyValuePair = JSON.parse(keyValuePair[1])
         tempDailyTaskList.push({
@@ -115,9 +110,22 @@ export default function App() {
           note: jsonKeyValuePair['title'],
         })
 
+        if (jsonKeyValuePair.stringDate in tempMarkedDates) {
+          tempMarkedDates[jsonKeyValuePair.stringDate].periods.push({
+            startingDay: true,
+            endingDay: true,
+            color: jsonKeyValuePair.color,
+          })
+        } else {
+          tempMarkedDates[jsonKeyValuePair.stringDate] = {
+            periods: jsonKeyValuePair.periods,
+          }
+        }
+
         if (index == keyValuePairArray.length - 1) {
           setDailyTaskList([...dailyTaskList, ...tempDailyTaskList])
           setWeeklyEventsList([...weeklyEventsList, ...tempWeeklyEventsList])
+          setMarkedDates({ ...markedDates, ...tempMarkedDates })
         }
       })
     })

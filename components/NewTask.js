@@ -189,9 +189,11 @@ const NewTask = (props) => {
               createDate(date, time)
               storeData(fullDate, {
                 date: fullDate,
+                stringDate: dateWithoutTime,
                 title: title,
                 duration: duration,
                 color: color,
+                periods: [{ startingDay: true, endingDay: true, color: color }],
               })
 
               props.showNewTaskModal()
