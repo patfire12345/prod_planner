@@ -51,7 +51,7 @@ const Daily = (props) => {
               )
             }>
             <Text>Notes</Text>
-            <Text style={{ fontSize: 42 }}>{props.dailyNewNote}</Text>
+            <Text style={{ fontSize: 24 }}>{props.dailyNewNote}</Text>
           </TouchableOpacity>
         )}
       </View>
