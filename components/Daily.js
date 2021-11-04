@@ -68,20 +68,6 @@ const styles = StyleSheet.create({
   items: {
     marginTop: 30,
   },
-
-  subtitle: {
-    color: 'grey',
-    fontWeight: 'bold',
-    fontSize: 15,
-    textAlign: 'center',
-  },
-  postInput: {
-    fontSize: 24,
-    borderColor: '#42435b',
-    borderWidth: 1,
-    margin: 10,
-    fontFamily: 'Outrun future',
-  },
   container: {
     flex: 1,
     justifyContent: 'space-between',
