@@ -159,7 +159,7 @@ export default function App() {
         {weekState && <Weekly weeklyEventsList={weeklyEventsList} />}
         {dayState && (
           <Daily
-            taskList={taskList}
+            taskList={dailyTaskList}
             dailyNewNote={dailyNewNote}
             setDailyNewNote={setDailyNewNote}
             dailyNewNoteButtonPressed={dailyNewNoteButtonPressed}
