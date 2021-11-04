@@ -20,7 +20,7 @@ const Dropdown = (props) => {
           {
             return props.isColor ? (
               <View
-                key={index}
+                key={index.toString()}
                 width={40}
                 height={50}
                 backgroundColor={props.data[index]}
@@ -36,7 +36,7 @@ const Dropdown = (props) => {
           {
             return props.isColor ? (
               <View
-                key={index}
+                key={index.toString()}
                 width={50}
                 height={25}
                 backgroundColor={props.data[index]}

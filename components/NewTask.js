@@ -12,17 +12,40 @@ import {
 import DatePicker from './DatePicker'
 import Dropdown from './Dropdown'
 import TimePicker from './TimePicker'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 // Modal that creates a new task for the users
 const NewTask = (props) => {
   const [title, setTitle] = useState('')
   const [date, setDate] = useState(new Date())
   const [time, setTime] = useState(new Date())
+  const [fullDate, setFullDate] = useState(new Date())
   const [duration, setDuration] = useState(0)
   const [color, setColor] = useState('blue')
 
   const [choseDuration, setChoseDuration] = useState(false)
   const [choseColor, setChoseColor] = useState(false)
+
+  const createDate = (dateObj, timeObj) => {
+    fullDate.setFullYear(dateObj.getFullYear())
+    fullDate.setMonth(dateObj.getMonth())
+    fullDate.setDate(dateObj.getDate())
+
+    fullDate.setHours(timeObj.getHours())
+    fullDate.setMinutes(timeObj.getMinutes())
+    fullDate.setSeconds(0)
+  }
+
+  const storeData = async (key, value) => {
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem(key.toString(), jsonValue)
+      console.log('Key: ' + key)
+      console.log('Value: ' + jsonValue)
+    } catch (e) {
+      console.log(e)
+    }
+  }
 
   return (
     <View style={{ display: 'flex' }}>
@@ -161,6 +184,14 @@ const NewTask = (props) => {
                 },
               })
 
+              createDate(date, time)
+              storeData(fullDate, {
+                date: fullDate,
+                title: title,
+                duration: duration,
+                color: color,
+              })
+
               props.showNewTaskModal()
               setTitle('')
               setDate(new Date())
@@ -168,6 +199,7 @@ const NewTask = (props) => {
               setChoseColor(false)
               setChoseDuration(false)
               setDuration(0)
+              storeData()
             }}>
             <Text>OK</Text>
           </TouchableOpacity>

@@ -12,6 +12,7 @@ import Daily from './components/Daily'
 import Monthly from './components/Monthly'
 import NewTask from './components/NewTask'
 import Weekly from './components/Weekly'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 // head component of the application
 export default function App() {
@@ -19,20 +20,43 @@ export default function App() {
   const [weekState, setWeekState] = useState(false)
   const [dayState, setDayState] = useState(true)
   const [showNewTask, setShowNewTask] = useState(false)
-  const [taskList, setTaskList] = useState([])
+  const [dailyTaskList, setDailyTaskList] = useState([])
   const [weeklyEventsList, setWeeklyEventsList] = useState([])
   const [markedDates, setMarkedDates] = useState({})
 
   const [dailyNewNote, setDailyNewNote] = useState('')
   const [dailyNewNoteButtonPressed, setDailyNewNoteButtonPressed] =
     useState(false)
+  const getData = async () => {
+    let keys = []
+    let values = []
+    try {
+      keys = await AsyncStorage.getAllKeys()
+      values = await AsyncStorage.multiGet(keys)
+
+      return values
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const deleteData = async () => {
+    try {
+      await AsyncStorage.clear()
+      setDailyTaskList([])
+      setWeeklyEventsList([])
+      setMarkedDates({})
+    } catch (e) {
+      console.log(e)
+    }
+  }
 
   const showNewTaskModal = () => {
     setShowNewTask(!showNewTask)
   }
 
-  const addToTaskList = (newTask) => {
-    setTaskList([...taskList, newTask])
+  const addToDailyTaskList = (newTask) => {
+    setDailyTaskList([...dailyTaskList, newTask])
   }
 
   const addToWeeklyEventsList = (newEvent) => {
@@ -51,6 +75,45 @@ export default function App() {
     setWeekState(false)
     setDayState(true)
   }, [weeklyEventsList])
+
+  useEffect(() => {
+    getData().then((keyValuePairArray) => {
+      let tempDailyTaskList = []
+      let tempWeeklyEventsList = []
+      keyValuePairArray.map((keyValuePair, index) => {
+        let jsonKeyValuePair = JSON.parse(keyValuePair[1])
+        tempDailyTaskList.push({
+          title: jsonKeyValuePair['title'],
+          category: `${jsonKeyValuePair['duration']} hours`,
+        })
+
+        tempWeeklyEventsList.push({
+          start: `${new Date(jsonKeyValuePair['date']).getFullYear()}-${
+            new Date(jsonKeyValuePair['date']).getMonth() + 1
+          }-${new Date(jsonKeyValuePair['date']).getDate()} ${
+            new Date(jsonKeyValuePair['date']).getHours() < 10 ? 0 : ''
+          }${new Date(jsonKeyValuePair['date']).getHours()}:${
+            new Date(jsonKeyValuePair['date']).getMinutes() < 10 ? 0 : ''
+          }${new Date(jsonKeyValuePair['date']).getMinutes()}:00`,
+          duration: `${
+            Math.floor(jsonKeyValuePair['duration']) < 10
+              ? `${0}${Math.floor(jsonKeyValuePair['duration'])}`
+              : Math.floor(jsonKeyValuePair['duration'])
+          }:${
+            (jsonKeyValuePair['duration'] * 60) % 60 === 0
+              ? '00'
+              : (jsonKeyValuePair['duration'] * 60) % 60
+          }:00`,
+          note: jsonKeyValuePair['title'],
+        })
+
+        if (index == keyValuePairArray.length - 1) {
+          setDailyTaskList([...dailyTaskList, ...tempDailyTaskList])
+          setWeeklyEventsList([...weeklyEventsList, ...tempWeeklyEventsList])
+        }
+      })
+    })
+  }, [])
 
   return (
     <ScrollView style={styles.container}>
@@ -91,6 +154,7 @@ export default function App() {
             }}
           />
         </View>
+        {/* {monthState && <Notification />} */}
         {monthState && <Monthly markedDates={markedDates} />}
         {weekState && <Weekly weeklyEventsList={weeklyEventsList} />}
         {dayState && (
@@ -107,9 +171,15 @@ export default function App() {
       <NewTask
         visible={showNewTask}
         showNewTaskModal={showNewTaskModal}
-        addToTaskList={addToTaskList}
+        addToTaskList={addToDailyTaskList}
         addToWeeklyEventsList={addToWeeklyEventsList}
         addToMarkedDates={addToMarkedDates}
+      />
+
+      <Button
+        title="Delete Everything!"
+        color="red"
+        onPress={() => deleteData()}
       />
     </ScrollView>
   )
