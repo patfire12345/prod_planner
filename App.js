@@ -24,6 +24,9 @@ export default function App() {
   const [weeklyEventsList, setWeeklyEventsList] = useState([])
   const [markedDates, setMarkedDates] = useState({})
 
+  const [dailyNewNote, setDailyNewNote] = useState('')
+  const [dailyNewNoteButtonPressed, setDailyNewNoteButtonPressed] =
+    useState(false)
   const getData = async () => {
     let keys = []
     let values = []
@@ -154,7 +157,15 @@ export default function App() {
         {/* {monthState && <Notification />} */}
         {monthState && <Monthly markedDates={markedDates} />}
         {weekState && <Weekly weeklyEventsList={weeklyEventsList} />}
-        {dayState && <Daily taskList={dailyTaskList} />}
+        {dayState && (
+          <Daily
+            taskList={taskList}
+            dailyNewNote={dailyNewNote}
+            setDailyNewNote={setDailyNewNote}
+            dailyNewNoteButtonPressed={dailyNewNoteButtonPressed}
+            setDailyNewNoteButtonPressed={setDailyNewNoteButtonPressed}
+          />
+        )}
       </View>
 
       <NewTask
