@@ -40,8 +40,6 @@ const NewTask = (props) => {
     try {
       const jsonValue = JSON.stringify(value)
       await AsyncStorage.setItem(key.toString(), jsonValue)
-      console.log('Key: ' + key)
-      console.log('Value: ' + jsonValue)
     } catch (e) {
       console.log(e)
     }
@@ -176,20 +174,26 @@ const NewTask = (props) => {
                 date.getMonth() + 1
               }-${date.getDate()}`
 
-              props.addToMarkedDates({
-                [dateWithoutTime]: {
-                  periods: [
-                    { startingDay: true, endingDay: true, color: color },
-                  ],
+              props.addToMarkedDates(
+                {
+                  [dateWithoutTime]: {
+                    periods: [
+                      { startingDay: true, endingDay: true, color: color },
+                    ],
+                  },
                 },
-              })
+                dateWithoutTime,
+                color
+              )
 
               createDate(date, time)
               storeData(fullDate, {
                 date: fullDate,
+                stringDate: dateWithoutTime,
                 title: title,
                 duration: duration,
                 color: color,
+                periods: [{ startingDay: true, endingDay: true, color: color }],
               })
 
               props.showNewTaskModal()
