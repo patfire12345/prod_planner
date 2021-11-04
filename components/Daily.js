@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Button,
   TouchableOpacity,
@@ -6,20 +6,34 @@ import {
   Text,
   StyleSheet,
   TextInput,
+  Modal,
 } from 'react-native'
 import Task from './Task'
+import TimePicker from './TimePicker'
+import UpdateTaskTimeDaily from './UpdateTaskTimeDaily'
 
 const Daily = (props) => {
+  const [showTaskDetails, setShowTaskDetails] = useState([])
+
   return (
     <View>
       <Text style={styles.sectionTitle}>Today's Tasks</Text>
       <Text style={styles.sectionTitle}>{Date()}</Text>
 
-      <View style={styles.items}>
-        {props.taskList.map((task, index) => (
-          <Task title={task.title} category={task.category} key={index} />
-        ))}
-      </View>
+      {props.taskList.map((task, index) => (
+        <View>
+          <TouchableOpacity
+            style={styles.items}
+            onPress={() => setShowTaskDetails(!showTaskDetails)}>
+            <Task title={task.title} category={task.category} key={index} />
+          </TouchableOpacity>
+          <UpdateTaskTimeDaily
+            showTaskDetails={showTaskDetails}
+            taskList={props.taskList}
+            index={index}
+          />
+        </View>
+      ))}
 
       <View>
         {props.dailyNewNoteButtonPressed ? (
@@ -72,6 +86,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     marginHorizontal: 16,
+  },
+  button: {
+    backgroundColor: '#2196F3',
+    width: 50,
+    height: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 10,
   },
 })
 

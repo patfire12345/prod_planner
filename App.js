@@ -82,6 +82,7 @@ export default function App() {
       let tempWeeklyEventsList = []
       keyValuePairArray.map((keyValuePair, index) => {
         let jsonKeyValuePair = JSON.parse(keyValuePair[1])
+
         tempDailyTaskList.push({
           title: jsonKeyValuePair['title'],
           category: `${jsonKeyValuePair['duration']} hours`,
