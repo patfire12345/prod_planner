@@ -154,8 +154,10 @@ const NewTask = (props) => {
 
               props.addToWeeklyEventsList({
                 start: `${date.getFullYear()}-${
-                  date.getMonth() + 1
-                }-${date.getDate()} ${
+                  date.getMonth() + 1 < 10 ? 0 : ''
+                }${date.getMonth() + 1}-${
+                  date.getDate() < 10 ? 0 : ''
+                }${date.getDate()} ${
                   time.getHours() < 10 ? 0 : ''
                 }${time.getHours()}:${
                   time.getMinutes() < 10 ? 0 : ''
@@ -171,8 +173,10 @@ const NewTask = (props) => {
               })
 
               const dateWithoutTime = `${date.getFullYear()}-${
-                date.getMonth() + 1
-              }-${date.getDate()}`
+                date.getMonth() + 1 < 10 ? 0 : ''
+              }${date.getMonth() + 1}-${
+                date.getDate() < 10 ? 0 : ''
+              }${date.getDate()}`
 
               props.addToMarkedDates(
                 {
