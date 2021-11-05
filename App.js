@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import {
   Button,
   StyleSheet,
@@ -13,6 +13,9 @@ import Monthly from './components/Monthly'
 import NewTask from './components/NewTask'
 import Weekly from './components/Weekly'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import * as Notifications from 'expo-notifications'
+import {Notification} from './components/Notifications'
+
 
 // head component of the application
 export default function App() {
@@ -85,22 +88,17 @@ export default function App() {
         })
 
         tempWeeklyEventsList.push({
-          start: `${new Date(jsonKeyValuePair['date']).getFullYear()}-${
-            new Date(jsonKeyValuePair['date']).getMonth() + 1
-          }-${new Date(jsonKeyValuePair['date']).getDate()} ${
-            new Date(jsonKeyValuePair['date']).getHours() < 10 ? 0 : ''
-          }${new Date(jsonKeyValuePair['date']).getHours()}:${
-            new Date(jsonKeyValuePair['date']).getMinutes() < 10 ? 0 : ''
-          }${new Date(jsonKeyValuePair['date']).getMinutes()}:00`,
-          duration: `${
-            Math.floor(jsonKeyValuePair['duration']) < 10
-              ? `${0}${Math.floor(jsonKeyValuePair['duration'])}`
-              : Math.floor(jsonKeyValuePair['duration'])
-          }:${
-            (jsonKeyValuePair['duration'] * 60) % 60 === 0
+          start: `${new Date(jsonKeyValuePair['date']).getFullYear()}-${new Date(jsonKeyValuePair['date']).getMonth() + 1
+            }-${new Date(jsonKeyValuePair['date']).getDate()} ${new Date(jsonKeyValuePair['date']).getHours() < 10 ? 0 : ''
+            }${new Date(jsonKeyValuePair['date']).getHours()}:${new Date(jsonKeyValuePair['date']).getMinutes() < 10 ? 0 : ''
+            }${new Date(jsonKeyValuePair['date']).getMinutes()}:00`,
+          duration: `${Math.floor(jsonKeyValuePair['duration']) < 10
+            ? `${0}${Math.floor(jsonKeyValuePair['duration'])}`
+            : Math.floor(jsonKeyValuePair['duration'])
+            }:${(jsonKeyValuePair['duration'] * 60) % 60 === 0
               ? '00'
               : (jsonKeyValuePair['duration'] * 60) % 60
-          }:00`,
+            }:00`,
           note: jsonKeyValuePair['title'],
         })
 
@@ -166,12 +164,60 @@ export default function App() {
       />
 
       <Button
+        title="Remind me"
+        onPress={() => {
+          schedulePushNotification()
+        }}
+      />
+      <Button
         title="Delete Everything!"
         color="red"
         onPress={() => deleteData()}
       />
     </ScrollView>
   )
+}
+async function schedulePushNotification() {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "Productivity Planner REMINDER 📬",
+      body: 'You need to study philosphy!',
+      'content-available': 1,
+      data: { data: 'some data' },
+    },
+    trigger: { seconds: 1 },
+  });
+};
+
+async function registerForPushNotificationsAsync() {
+  let token
+  if (Constants.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync()
+    let finalStatus = existingStatus
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync()
+      finalStatus = status
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!')
+      return
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data
+    console.log(token)
+  } else {
+    alert('Must use physical device for Push Notifications')
+  }
+
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    })
+  }
+
+  return token
 }
 
 const styles = StyleSheet.create({
