@@ -1,21 +1,29 @@
 import React from 'react'
 import { TouchableOpacity, Text, Modal, StyleSheet } from 'react-native'
 import TimePicker from './TimePicker'
+import Dropdown from './Dropdown'
+import DatePicker from './DatePicker'
+
+
 
 const UpdateTaskTimeDaily = (props) => {
   return (
     <Modal visible={props.showTaskDetails}>
-      <Text>{props.taskList[props.index].title}</Text>
+      <Text style={styles.sectionTitle}>
+        {props.taskList[props.index].title}</Text>
       <TimePicker
+
         // hour={time.getHours()}
         // minute={
         //   time.getMinutes() < 10
         //     ? `0${time.getMinutes()}`
         //     : `${time.getMinutes()}`
         // }
+
         text="Time"
-        // setTime={setTime} <=
+      //setTime={setTime}
       />
+
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
@@ -49,6 +57,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 10,
   },
+
 })
 
 export default UpdateTaskTimeDaily
