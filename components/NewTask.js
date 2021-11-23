@@ -132,6 +132,7 @@ const NewTask = (props) => {
                 props.addToTaskList({
                   title: title,
                   category: `${duration} hours`,
+                  color: color,
                 })
               }
 

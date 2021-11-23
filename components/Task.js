@@ -6,7 +6,11 @@ const Task = (props) => {
   return (
     <View style={styles.item}>
       <View style={styles.itemLeft}>
-        <TouchableOpacity style={styles.square}></TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            ...styles.square,
+            ...{ backgroundColor: props.color },
+          }}></TouchableOpacity>
         <Text style={styles.itemText}>
           {props.title} {'\n'}
           {props.category}
@@ -35,7 +39,7 @@ const styles = StyleSheet.create({
   square: {
     width: 24,
     height: 24,
-    backgroundColor: '#55ECF6',
+    // backgroundColor: '#55ECF6',
     opacity: 0.4,
     borderRadius: 5,
     marginRight: 15,

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Modal,
   ScrollView,
+  Alert,
 } from 'react-native'
 import Daily from './components/Daily'
 import Monthly from './components/Monthly'
@@ -91,6 +92,7 @@ export default function App() {
         tempDailyTaskList.push({
           title: jsonKeyValuePair['title'],
           category: `${jsonKeyValuePair['duration']} hours`,
+          color: jsonKeyValuePair['color'],
         })
 
         tempWeeklyEventsList.push({
@@ -173,7 +175,6 @@ export default function App() {
             }}
           />
         </View>
-        {/* {monthState && <Notification />} */}
         {monthState && <Monthly markedDates={markedDates} />}
         {weekState && <Weekly weeklyEventsList={weeklyEventsList} />}
         {dayState && (
@@ -198,7 +199,18 @@ export default function App() {
       <Button
         title="Delete Everything!"
         color="red"
-        onPress={() => deleteData()}
+        onPress={() => {
+          Alert.alert('Are you sure?', 'Alert Message', [
+            {
+              text: 'Cancel',
+              style: 'cancel',
+            },
+            {
+              text: 'OK',
+              onPress: () => deleteData(),
+            },
+          ])
+        }}
       />
     </ScrollView>
   )
