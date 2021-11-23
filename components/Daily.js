@@ -13,7 +13,10 @@ const Daily = (props) => {
   return (
     <View>
       <Text style={styles.sectionTitle}>Today's Tasks</Text>
-      <Text style={styles.sectionTitle}>{Date()}</Text>
+      <Text
+        style={
+          styles.sectionTitle
+        }>{`${new Date().getMonth()}/${new Date().getDate()}/${new Date().getFullYear()}`}</Text>
 
       <View style={styles.items}>
         {props.taskList.map((task, index) => (
