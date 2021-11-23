@@ -13,6 +13,7 @@ import DatePicker from './DatePicker'
 import Dropdown from './Dropdown'
 import TimePicker from './TimePicker'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import ColorPickerWheel from './ColorPickerWheel'
 
 // Modal that creates a new task for the users
 const NewTask = (props) => {
@@ -21,7 +22,7 @@ const NewTask = (props) => {
   const [time, setTime] = useState(new Date())
   const [fullDate, setFullDate] = useState(new Date())
   const [duration, setDuration] = useState(0)
-  const [color, setColor] = useState('blue')
+  const [color, setColor] = useState('#ffffff')
 
   const [choseDuration, setChoseDuration] = useState(false)
   const [choseColor, setChoseColor] = useState(false)
@@ -100,28 +101,10 @@ const NewTask = (props) => {
           isColor={false}
         />
 
-        <Dropdown
-          data={['blue', 'red', 'yellow', 'green', 'orange', 'purple']}
-          set={setColor}
-          changeFlag={setChoseColor}
-          defaultButtonText="Colour"
-          buttonStyle={{
-            backgroundColor: 'transparent',
-            width: 40,
-            height: 40,
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderWidth: 1,
-            padding: 10,
-          }}
-          buttonText={{
-            position: 'absolute',
-            color: 'grey',
-            fontSize: 14,
-            top: 25,
-            left: -60,
-          }}
-          isColor={true}
+        <ColorPickerWheel
+          color={color}
+          setColor={setColor}
+          setChoseColor={setChoseColor}
         />
 
         <View style={styles.buttonContainer}>
