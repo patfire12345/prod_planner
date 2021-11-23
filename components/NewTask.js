@@ -135,31 +135,79 @@ const NewTask = (props) => {
                 })
               }
 
-              props.addToWeeklyEventsList({
-                start: `${date.getFullYear()}-${
-                  date.getMonth() + 1 < 10 ? 0 : ''
-                }${date.getMonth() + 1}-${
-                  date.getDate() < 10 ? 0 : ''
-                }${date.getDate()} ${
-                  time.getHours() < 10 ? 0 : ''
-                }${time.getHours()}:${
-                  time.getMinutes() < 10 ? 0 : ''
-                }${time.getMinutes()}:00`,
-                duration: `${
-                  Math.floor(duration) < 10
-                    ? `${0}${Math.floor(duration)}`
-                    : Math.floor(duration)
-                }:${
-                  (duration * 60) % 60 === 0 ? '00' : (duration * 60) % 60
-                }:00`,
-                note: title,
-              })
+              props.addToWeeklyEventsList([
+                {
+                  start: `${date.getFullYear()}-${
+                    date.getMonth() + 1 < 10 ? 0 : ''
+                  }${date.getMonth() + 1}-${
+                    date.getDate() < 10 ? 0 : ''
+                  }${date.getDate()} ${
+                    time.getHours() < 10 ? 0 : ''
+                  }${time.getHours()}:${
+                    time.getMinutes() < 10 ? 0 : ''
+                  }${time.getMinutes()}:00`,
+                  duration: `${
+                    Math.floor(duration) < 10
+                      ? `${0}${Math.floor(duration)}`
+                      : Math.floor(duration)
+                  }:${
+                    (duration * 60) % 60 === 0 ? '00' : (duration * 60) % 60
+                  }:00`,
+                  note: title,
+                },
+                {
+                  start: `${date.getFullYear()}-${
+                    date.getMonth() + 1 < 10 ? 0 : ''
+                  }${date.getMonth() + 1}-${date.getDate() - 1 < 10 ? 0 : ''}${
+                    date.getDate() - 1
+                  } ${time.getHours() < 10 ? 0 : ''}${time.getHours()}:${
+                    time.getMinutes() < 10 ? 0 : ''
+                  }${time.getMinutes()}:00`,
+                  duration: `${
+                    Math.floor(duration) < 10
+                      ? `${0}${Math.floor(duration)}`
+                      : Math.floor(duration)
+                  }:${
+                    (duration * 60) % 60 === 0 ? '00' : (duration * 60) % 60
+                  }:00`,
+                  note: `Reminder: ${title}`,
+                },
+                {
+                  start: `${date.getFullYear()}-${
+                    date.getMonth() + 1 < 10 ? 0 : ''
+                  }${date.getMonth() + 1}-${date.getDate() - 3 < 10 ? 0 : ''}${
+                    date.getDate() - 3
+                  } ${time.getHours() < 10 ? 0 : ''}${time.getHours()}:${
+                    time.getMinutes() < 10 ? 0 : ''
+                  }${time.getMinutes()}:00`,
+                  duration: `${
+                    Math.floor(duration) < 10
+                      ? `${0}${Math.floor(duration)}`
+                      : Math.floor(duration)
+                  }:${
+                    (duration * 60) % 60 === 0 ? '00' : (duration * 60) % 60
+                  }:00`,
+                  note: `Reminder: ${title}`,
+                },
+              ])
 
               const dateWithoutTime = `${date.getFullYear()}-${
                 date.getMonth() + 1 < 10 ? 0 : ''
               }${date.getMonth() + 1}-${
                 date.getDate() < 10 ? 0 : ''
               }${date.getDate()}`
+
+              const reminderDate1 = `${date.getFullYear()}-${
+                date.getMonth() + 1 < 10 ? 0 : ''
+              }${date.getMonth() + 1}-${date.getDate() - 1 < 10 ? 0 : ''}${
+                date.getDate() - 1
+              }`
+
+              const reminderDate2 = `${date.getFullYear()}-${
+                date.getMonth() + 1 < 10 ? 0 : ''
+              }${date.getMonth() + 1}-${date.getDate() - 3 < 10 ? 0 : ''}${
+                date.getDate() - 3
+              }`
 
               props.addToMarkedDates(
                 {
@@ -173,10 +221,56 @@ const NewTask = (props) => {
                 color
               )
 
+              props.addToMarkedDates(
+                {
+                  [reminderDate1]: {
+                    periods: [
+                      { startingDay: true, endingDay: true, color: color },
+                    ],
+                  },
+                },
+                reminderDate1,
+                color
+              )
+
+              props.addToMarkedDates(
+                {
+                  [reminderDate2]: {
+                    periods: [
+                      { startingDay: true, endingDay: true, color: color },
+                    ],
+                  },
+                },
+                reminderDate2,
+                color
+              )
+
               createDate(date, time)
               storeData(fullDate, {
                 date: fullDate,
                 stringDate: dateWithoutTime,
+                title: title,
+                duration: duration,
+                color: color,
+                periods: [{ startingDay: true, endingDay: true, color: color }],
+              })
+
+              date.setDate(date.getDate() - 1)
+              createDate(date, time)
+              storeData(fullDate, {
+                date: fullDate,
+                stringDate: reminderDate1,
+                title: title,
+                duration: duration,
+                color: color,
+                periods: [{ startingDay: true, endingDay: true, color: color }],
+              })
+
+              date.setDate(date.getDate() - 3)
+              createDate(date, time)
+              storeData(fullDate, {
+                date: fullDate,
+                stringDate: reminderDate2,
                 title: title,
                 duration: duration,
                 color: color,
