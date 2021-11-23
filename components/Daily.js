@@ -17,7 +17,12 @@ const Daily = (props) => {
 
       <View style={styles.items}>
         {props.taskList.map((task, index) => (
-          <Task title={task.title} category={task.category} key={index} />
+          <Task
+            title={task.title}
+            category={task.category}
+            color={task.color}
+            key={index}
+          />
         ))}
       </View>
 
