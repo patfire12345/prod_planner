@@ -60,7 +60,7 @@ export default function App() {
   }
 
   const addToWeeklyEventsList = (newEvent) => {
-    setWeeklyEventsList([...weeklyEventsList, newEvent])
+    setWeeklyEventsList(weeklyEventsList.concat(newEvent))
   }
 
   const addToMarkedDates = (newMarkedDate, date, color) => {
@@ -88,11 +88,20 @@ export default function App() {
       let tempMarkedDates = {}
       keyValuePairArray.map((keyValuePair, index) => {
         let jsonKeyValuePair = JSON.parse(keyValuePair[1])
-        tempDailyTaskList.push({
-          title: jsonKeyValuePair['title'],
-          category: `${jsonKeyValuePair['duration']} hours`,
-        })
 
+        if (
+          new Date(jsonKeyValuePair['date']).getDate() ===
+            new Date().getDate() &&
+          new Date(jsonKeyValuePair['date']).getMonth() ===
+            new Date().getMonth() &&
+          new Date(jsonKeyValuePair['date']).getFullYear() ===
+            new Date().getFullYear()
+        ) {
+          tempDailyTaskList.push({
+            title: jsonKeyValuePair['title'],
+            category: `${jsonKeyValuePair['duration']} hours`,
+          })
+        }
         tempWeeklyEventsList.push({
           start: `${new Date(jsonKeyValuePair['date']).getFullYear()}-${
             new Date(jsonKeyValuePair['date']).getMonth() + 1
