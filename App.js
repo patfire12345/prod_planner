@@ -144,72 +144,74 @@ export default function App() {
   }, [])
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}> Productivity Planner </Text>
+    <View style ={styles.container}>
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Monthly"
+          onPress={() => {
+            setMonthState(true)
+            setWeekState(false)
+            setDayState(false)
+          }}
+        />
+        <Button
+          title="Weekly"
+          onPress={() => {
+            setMonthState(false)
+            setWeekState(true)
+            setDayState(false)
+          }}
+        />
+        <Button
+          title="Daily"
+          onPress={() => {
+            setMonthState(false)
+            setWeekState(false)
+            setDayState(true)
+          }}
+        />
+      </View>
+      <ScrollView style={styles.container}>
+        <Text style={styles.title}> Productivity Planner </Text>
+        <View style={styles.tasksWrapper}>
+          {/* {monthState && <Notification />} */}
+          {monthState && <Monthly markedDates={markedDates} />}
+          {weekState && <Weekly weeklyEventsList={weeklyEventsList} />}
+          {dayState && (
+            <Daily
+              taskList={dailyTaskList}
+              dailyNewNote={dailyNewNote}
+              setDailyNewNote={setDailyNewNote}
+              dailyNewNoteButtonPressed={dailyNewNoteButtonPressed}
+              setDailyNewNoteButtonPressed={setDailyNewNoteButtonPressed}
+            />
+          )}
+        </View>
+
+        <NewTask
+          visible={showNewTask}
+          showNewTaskModal={showNewTaskModal}
+          addToTaskList={addToDailyTaskList}
+          addToWeeklyEventsList={addToWeeklyEventsList}
+          addToMarkedDates={addToMarkedDates}
+        />
+
+        <Button
+          title="Delete Everything!"
+          color="red"
+          onPress={() => deleteData()}
+        />
+      </ScrollView>
       <View style={styles.addButtonContainer}>
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => {
             showNewTaskModal()
           }}>
-          <Text>+</Text>
+          <Text style={{fontSize:20,color:"white",}}>+</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.tasksWrapper}>
-        <View style={styles.buttonContainer}>
-          <Button
-            title="Monthly"
-            onPress={() => {
-              setMonthState(true)
-              setWeekState(false)
-              setDayState(false)
-            }}
-          />
-          <Button
-            title="Weekly"
-            onPress={() => {
-              setMonthState(false)
-              setWeekState(true)
-              setDayState(false)
-            }}
-          />
-          <Button
-            title="Daily"
-            onPress={() => {
-              setMonthState(false)
-              setWeekState(false)
-              setDayState(true)
-            }}
-          />
-        </View>
-        {/* {monthState && <Notification />} */}
-        {monthState && <Monthly markedDates={markedDates} />}
-        {weekState && <Weekly weeklyEventsList={weeklyEventsList} />}
-        {dayState && (
-          <Daily
-            taskList={dailyTaskList}
-            dailyNewNote={dailyNewNote}
-            setDailyNewNote={setDailyNewNote}
-            dailyNewNoteButtonPressed={dailyNewNoteButtonPressed}
-            setDailyNewNoteButtonPressed={setDailyNewNoteButtonPressed}
-          />
-        )}
-      </View>
-
-      <NewTask
-        visible={showNewTask}
-        showNewTaskModal={showNewTaskModal}
-        addToTaskList={addToDailyTaskList}
-        addToWeeklyEventsList={addToWeeklyEventsList}
-        addToMarkedDates={addToMarkedDates}
-      />
-
-      <Button
-        title="Delete Everything!"
-        color="red"
-        onPress={() => deleteData()}
-      />
-    </ScrollView>
+    </View>
   )
 }
 
@@ -219,32 +221,37 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8EAED',
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    paddingTop: 50,
+    paddingTop: 10,
     textAlign: 'center',
   },
   tasksWrapper: {
-    paddingTop: 80,
+    paddingTop: 5,
     paddingHorizontal: 20,
+    zIndex:2
   },
   buttonContainer: {
     flexDirection: 'row',
-    marginBottom: 10,
-    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    justifyContent: 'space-evenly',
+    paddingVertical: 10,
   },
   addButton: {
+    flexDirection: 'row',
+    marginLeft: 10,
+    marginTop: -10,
+    width: 50,
+    height: 50,
     borderRadius: 100,
     backgroundColor: '#2196F3',
-    width: 40,
-    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
   },
   addButtonContainer: {
-    flexDirection: 'row',
-    margin: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    resizeMode: 'contain',
+    width: 50,
+    height: 50,
   },
 })

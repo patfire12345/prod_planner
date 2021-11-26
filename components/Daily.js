@@ -9,11 +9,21 @@ import {
 } from 'react-native'
 import Task from './Task'
 
+var d = new Date();
+var day = d.getDay();
+var date = d.getDate();
+var month = d.getMonth();
+var days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]
+var months = [ "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER" ];
+var selectedMonth = months[month]
+var selectedDay = days[day]
+var today = selectedDay + ", " + selectedMonth + " " + date;
+
 const Daily = (props) => {
   return (
     <View>
-      <Text style={styles.sectionTitle}>Today's Tasks</Text>
-      <Text style={styles.sectionTitle}>{Date()}</Text>
+      
+      <Text style={styles.sectionTitle}>TODAY: {today}</Text>
 
       <View style={styles.items}>
         {props.taskList.map((task, index) => (
@@ -61,7 +71,8 @@ const Daily = (props) => {
 
 const styles = StyleSheet.create({
   sectionTitle: {
-    fontSize: 24,
+    fontSize: 20,
+    color: 'teal',
     fontWeight: 'bold',
     textAlign: 'center',
   },
