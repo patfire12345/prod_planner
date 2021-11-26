@@ -198,7 +198,7 @@ export default function App() {
 
         <Button
           title="Delete Everything!"
-          color="red"
+          color="#e32636"
           onPress={() => deleteData()}
         />
       </ScrollView>
