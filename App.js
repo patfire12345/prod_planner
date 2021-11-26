@@ -14,7 +14,7 @@ import NewTask from './components/NewTask'
 import Weekly from './components/Weekly'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Notifications from 'expo-notifications'
-import {Notification} from './components/Notifications'
+import { Notification } from './components/Notifications'
 
 
 // head component of the application
@@ -27,6 +27,9 @@ export default function App() {
   const [weeklyEventsList, setWeeklyEventsList] = useState([])
   const [markedDates, setMarkedDates] = useState({})
 
+  const [dailyNewNote, setDailyNewNote] = useState('')
+  const [dailyNewNoteButtonPressed, setDailyNewNoteButtonPressed] =
+    useState(false)
   const getData = async () => {
     let keys = []
     let values = []
@@ -60,14 +63,19 @@ export default function App() {
   }
 
   const addToWeeklyEventsList = (newEvent) => {
-    setWeeklyEventsList([...weeklyEventsList, newEvent])
+    setWeeklyEventsList(weeklyEventsList.concat(newEvent))
   }
 
-  const addToMarkedDates = (newMarkedDate) => {
-    // if (markedDates.hasOwnProperty(Object.keys(newMarkedDate)[0])) {
-    //   markedDates[Object.keys(newMarkedDate)[0]].periods
-    // }
-    setMarkedDates({ ...markedDates, ...newMarkedDate })
+  const addToMarkedDates = (newMarkedDate, date, color) => {
+    if (date in markedDates) {
+      markedDates[date].periods.push({
+        startingDay: true,
+        endingDay: true,
+        color: color,
+      })
+    } else {
+      setMarkedDates({ ...markedDates, ...newMarkedDate })
+    }
   }
 
   useEffect(() => {
@@ -80,13 +88,23 @@ export default function App() {
     getData().then((keyValuePairArray) => {
       let tempDailyTaskList = []
       let tempWeeklyEventsList = []
+      let tempMarkedDates = {}
       keyValuePairArray.map((keyValuePair, index) => {
         let jsonKeyValuePair = JSON.parse(keyValuePair[1])
-        tempDailyTaskList.push({
-          title: jsonKeyValuePair['title'],
-          category: `${jsonKeyValuePair['duration']} hours`,
-        })
 
+        if (
+          new Date(jsonKeyValuePair['date']).getDate() ===
+          new Date().getDate() &&
+          new Date(jsonKeyValuePair['date']).getMonth() ===
+          new Date().getMonth() &&
+          new Date(jsonKeyValuePair['date']).getFullYear() ===
+          new Date().getFullYear()
+        ) {
+          tempDailyTaskList.push({
+            title: jsonKeyValuePair['title'],
+            category: `${jsonKeyValuePair['duration']} hours`,
+          })
+        }
         tempWeeklyEventsList.push({
           start: `${new Date(jsonKeyValuePair['date']).getFullYear()}-${new Date(jsonKeyValuePair['date']).getMonth() + 1
             }-${new Date(jsonKeyValuePair['date']).getDate()} ${new Date(jsonKeyValuePair['date']).getHours() < 10 ? 0 : ''
@@ -102,79 +120,101 @@ export default function App() {
           note: jsonKeyValuePair['title'],
         })
 
+        if (jsonKeyValuePair.stringDate in tempMarkedDates) {
+          tempMarkedDates[jsonKeyValuePair.stringDate].periods.push({
+            startingDay: true,
+            endingDay: true,
+            color: jsonKeyValuePair.color,
+          })
+        } else {
+          tempMarkedDates[jsonKeyValuePair.stringDate] = {
+            periods: jsonKeyValuePair.periods,
+          }
+        }
+
         if (index == keyValuePairArray.length - 1) {
           setDailyTaskList([...dailyTaskList, ...tempDailyTaskList])
           setWeeklyEventsList([...weeklyEventsList, ...tempWeeklyEventsList])
+          setMarkedDates({ ...markedDates, ...tempMarkedDates })
         }
       })
     })
   }, [])
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}> Productivity Planner </Text>
+    <View style={styles.container}>
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Monthly"
+          onPress={() => {
+            setMonthState(true)
+            setWeekState(false)
+            setDayState(false)
+          }}
+        />
+        <Button
+          title="Weekly"
+          onPress={() => {
+            setMonthState(false)
+            setWeekState(true)
+            setDayState(false)
+          }}
+        />
+        <Button
+          title="Daily"
+          onPress={() => {
+            setMonthState(false)
+            setWeekState(false)
+            setDayState(true)
+          }}
+        />
+      </View>
+      <ScrollView style={styles.container}>
+        <Text style={styles.title}> Productivity Planner </Text>
+        <View style={styles.tasksWrapper}>
+          {/* {monthState && <Notification />} */}
+          {monthState && <Monthly markedDates={markedDates} />}
+          {weekState && <Weekly weeklyEventsList={weeklyEventsList} />}
+          {dayState && (
+            <Daily
+              taskList={dailyTaskList}
+              dailyNewNote={dailyNewNote}
+              setDailyNewNote={setDailyNewNote}
+              dailyNewNoteButtonPressed={dailyNewNoteButtonPressed}
+              setDailyNewNoteButtonPressed={setDailyNewNoteButtonPressed}
+            />
+          )}
+        </View>
+
+        <NewTask
+          visible={showNewTask}
+          showNewTaskModal={showNewTaskModal}
+          addToTaskList={addToDailyTaskList}
+          addToWeeklyEventsList={addToWeeklyEventsList}
+          addToMarkedDates={addToMarkedDates}
+        />
+
+        <Button
+          title="Delete Everything!"
+          color="red"
+          onPress={() => deleteData()}
+        />
+        <Button
+          title="Remind Me"
+          color="blue"
+          onPress={() => schedulePushNotification()}
+        />
+      </ScrollView>
       <View style={styles.addButtonContainer}>
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => {
             showNewTaskModal()
           }}>
-          <Text>+</Text>
+          <Text style={{ fontSize: 20, color: "white", }}>+</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.tasksWrapper}>
-        <View style={styles.buttonContainer}>
-          <Button
-            title="Monthly"
-            onPress={() => {
-              setMonthState(true)
-              setWeekState(false)
-              setDayState(false)
-            }}
-          />
-          <Button
-            title="Weekly"
-            onPress={() => {
-              setMonthState(false)
-              setWeekState(true)
-              setDayState(false)
-            }}
-          />
-          <Button
-            title="Daily"
-            onPress={() => {
-              setMonthState(false)
-              setWeekState(false)
-              setDayState(true)
-            }}
-          />
-        </View>
-        {/* {monthState && <Notification />} */}
-        {monthState && <Monthly markedDates={markedDates} />}
-        {weekState && <Weekly weeklyEventsList={weeklyEventsList} />}
-        {dayState && <Daily taskList={dailyTaskList} />}
-      </View>
-
-      <NewTask
-        visible={showNewTask}
-        showNewTaskModal={showNewTaskModal}
-        addToTaskList={addToDailyTaskList}
-        addToWeeklyEventsList={addToWeeklyEventsList}
-        addToMarkedDates={addToMarkedDates}
-      />
-
-      <Button
-        title="Remind me"
-        onPress={() => {
-          schedulePushNotification()
-        }}
-      />
-      <Button
-        title="Delete Everything!"
-        color="red"
-        onPress={() => deleteData()}
-      />
-    </ScrollView>
+    </View>
   )
 }
 async function schedulePushNotification() {
@@ -226,32 +266,37 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8EAED',
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    paddingTop: 50,
+    paddingTop: 10,
     textAlign: 'center',
   },
   tasksWrapper: {
-    paddingTop: 80,
+    paddingTop: 5,
     paddingHorizontal: 20,
+    zIndex: 2
   },
   buttonContainer: {
     flexDirection: 'row',
-    marginBottom: 10,
-    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    justifyContent: 'space-evenly',
+    paddingVertical: 10,
   },
   addButton: {
+    flexDirection: 'row',
+    marginLeft: 10,
+    marginTop: -10,
+    width: 50,
+    height: 50,
     borderRadius: 100,
     backgroundColor: '#2196F3',
-    width: 40,
-    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
   },
   addButtonContainer: {
-    flexDirection: 'row',
-    margin: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    resizeMode: 'contain',
+    width: 50,
+    height: 50,
   },
 })
