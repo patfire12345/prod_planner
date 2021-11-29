@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { TouchableOpacity, View, Text, StyleSheet, Modal, Dimensions } from 'react-native'
 import { Octicons, Ionicons } from '@expo/vector-icons'
 import { StackedBarChart, PieChart } from 'react-native-chart-kit'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import MoodPicker from './MoodPicker'
 
 // Component that shows mood stats
@@ -17,7 +18,7 @@ const MoodStats = (props) => {
     labels: [ "Last Month", "This Month"],
     legend: ["Good Mood", "Average Mood", "Bad Mood"],
     data: [
-      [10, 13, 5],
+      [3, 2, 1], //fake data for display only
       [goodData, averageData, badData]
     ],
     barColors: ["#058ED9", "#848FA2", "#CC2D35"]
@@ -26,21 +27,21 @@ const MoodStats = (props) => {
   const pieData = [
     {
       name: "Good Mood",
-      population: goodData,
+      population: goodData+3,
       color: "#058ED9",
       legendFontColor: "#058ED9",
       legendFontSize: 14
     },
     {
       name: "Average Mood",
-      population: averageData,
+      population: averageData+2,
       color: "#848FA2",
       legendFontColor: "#848FA2",
       legendFontSize: 14
     },
     {
       name: "Bad Mood",
-      population: badData,
+      population: badData+1,
       color: "#CC2D35",
       legendFontColor: "#CC2D35",
       legendFontSize: 14
@@ -136,6 +137,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  button: {
+    backgroundColor: '#575DD9',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'stretch',
+    paddingVertical: 6,
+    paddingHorizontal: 22,
+    marginTop: 20,
+    marginHorizontal: 90,
+    borderRadius: 6,
+  }
 })
 
 export default MoodStats;

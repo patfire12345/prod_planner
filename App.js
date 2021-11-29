@@ -225,6 +225,9 @@ export default function App() {
         <MoodStats
           visible={showMoodStats}
           showMoodStatsModal={showMoodStatsModal}
+          setGoodCount={setGoodCount}
+          setAverageCount={setAverageCount}
+          setBadCount={setBadCount}
           goodCount={goodCount}
           averageCount={averageCount}
           badCount={badCount}
