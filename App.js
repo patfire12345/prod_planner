@@ -8,10 +8,13 @@ import {
   Modal,
   ScrollView,
 } from 'react-native'
+import { MaterialIcons, Octicons } from '@expo/vector-icons'
 import Daily from './components/Daily'
 import Monthly from './components/Monthly'
 import NewTask from './components/NewTask'
 import Weekly from './components/Weekly'
+import MoodPicker from './components/MoodPicker'
+import MoodStats from './components/MoodStats'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 // head component of the application
@@ -23,6 +26,12 @@ export default function App() {
   const [dailyTaskList, setDailyTaskList] = useState([])
   const [weeklyEventsList, setWeeklyEventsList] = useState([])
   const [markedDates, setMarkedDates] = useState({})
+ 
+  const [showMood, setShowMoodModal] = useState(false);
+  const [showMoodStats, setShowMoodStatsModal] = useState(false);
+  const [goodCount, setGoodCount] = useState(0);
+  const [averageCount, setAverageCount] = useState(0);
+  const [badCount, setBadCount] = useState(0);
 
   const [dailyNewNote, setDailyNewNote] = useState('')
   const [dailyNewNoteButtonPressed, setDailyNewNoteButtonPressed] =
@@ -49,6 +58,14 @@ export default function App() {
     } catch (e) {
       console.log(e)
     }
+  }
+
+  const showMoodModal = () => {
+    setShowMoodModal(!showMood)
+  }
+
+  const showMoodStatsModal = () => {
+    setShowMoodStatsModal(!showMoodStats)
   }
 
   const showNewTaskModal = () => {
@@ -195,7 +212,26 @@ export default function App() {
           addToWeeklyEventsList={addToWeeklyEventsList}
           addToMarkedDates={addToMarkedDates}
         />
-
+        <MoodPicker
+          visible={showMood}
+          showMoodModal={showMoodModal}
+          setGoodCount={setGoodCount}
+          setAverageCount={setAverageCount}
+          setBadCount={setBadCount}
+          goodCount={goodCount}
+          averageCount={averageCount}
+          badCount={badCount}
+          />
+        <MoodStats
+          visible={showMoodStats}
+          showMoodStatsModal={showMoodStatsModal}
+          setGoodCount={setGoodCount}
+          setAverageCount={setAverageCount}
+          setBadCount={setBadCount}
+          goodCount={goodCount}
+          averageCount={averageCount}
+          badCount={badCount}
+          />
         <Button
           title="Delete Everything!"
           color="#e32636"
@@ -203,13 +239,25 @@ export default function App() {
         />
       </ScrollView>
       <View style={styles.addButtonContainer}>
+        <MaterialIcons 
+          name="mood" 
+          size={52} 
+          color="grey"
+          onPress={() => {showMoodModal()}} 
+        />
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => {
             showNewTaskModal()
           }}>
-          <Text style={{fontSize:20,color:"white",}}>+</Text>
+          <Text style={{fontSize:28,color:"white",}}>+</Text>
         </TouchableOpacity>
+        <Octicons 
+          name="graph" 
+          size={40} 
+          color="grey"
+          onPress={() => {showMoodStatsModal()}} 
+        />
       </View>
     </View>
   )
@@ -238,20 +286,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     paddingVertical: 10,
   },
-  addButton: {
+  addButtonContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    paddingVertical: 3,
+  },
+  addButton: {
     marginLeft: 10,
-    marginTop: -10,
+    marginTop: 0,
     width: 50,
     height: 50,
     borderRadius: 100,
     backgroundColor: '#2196F3',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  addButtonContainer: {
-    resizeMode: 'contain',
-    width: 50,
-    height: 50,
   },
 })
