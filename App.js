@@ -27,6 +27,10 @@ export default function App() {
   const [weeklyEventsList, setWeeklyEventsList] = useState([])
   const [markedDates, setMarkedDates] = useState({})
 
+  const [reminderTime, setReminderTime] = useState('')
+  const [reminder, setReminder] = useState(false)
+  const [reminderBody, setReminderBody] = useState('')
+
   const [dailyNewNote, setDailyNewNote] = useState('')
   const [dailyNewNoteButtonPressed, setDailyNewNoteButtonPressed] =
     useState(false)
@@ -192,6 +196,9 @@ export default function App() {
           addToTaskList={addToDailyTaskList}
           addToWeeklyEventsList={addToWeeklyEventsList}
           addToMarkedDates={addToMarkedDates}
+          reminder={reminder}
+          reminderBody={reminderBody}
+          reminderTime={reminderTime}
         />
 
         <Button
@@ -221,7 +228,7 @@ async function schedulePushNotification() {
   await Notifications.scheduleNotificationAsync({
     content: {
       title: "Productivity Planner REMINDER 📬",
-      body: 'You need to study philosphy!',
+      body: 'help',
       'content-available': 1,
       data: { data: 'some data' },
     },

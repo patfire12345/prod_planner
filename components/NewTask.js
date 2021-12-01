@@ -8,7 +8,10 @@ import {
   TextInput,
   Keyboard,
   TouchableWithoutFeedback,
+  Alert,
 } from 'react-native'
+import * as Notifications from 'expo-notifications'
+import * as Permissions from 'expo-permissions'
 import DatePicker from './DatePicker'
 import Dropdown from './Dropdown'
 import TimePicker from './TimePicker'
@@ -24,42 +27,115 @@ const NewTask = (props) => {
   const [duration, setDuration] = useState(0)
   const [color, setColor] = useState('#ffffff')
 
+  const [reminderTime, setReminderTime] = useState('At time of event')
+  const [body, setBody] = useState('in your reminders')
+  const [reminder, setReminder] = useState(false)
+  const [triggerTime, setTriggerTime] = useState(0)
+
   const [choseDuration, setChoseDuration] = useState(false)
   const [choseColor, setChoseColor] = useState(false)
 
-  const [reminderTime, setReminder] = useState(false) //not implemented
+  const trigger = new Date()
+  const dateYear = date.getFullYear()
+  const dateMonth = date.getMonth()
+  const dateDay = date.getDate()
+  const timeHr = time.getHours()
+  const timeMin = time.getMinutes()
 
-
-
-  const reminder = (reminderTime) => {
-    var triggerTime
+  const triggerButton = (reminderTime) => {
+    setTriggerTime(2)
     switch (reminderTime) {
       case "At time of event":
-        triggerTime = setDate //time of event in seconds - current time in seconds (not implemented)
-        break
+        setBody('right now!')
       case "15 min before":
-        triggerTime = setDate - 900
+        setBody('in 15 min!')
+        trigger.setMinutes(timeMin-15)
         break
       case "30 min before":
-        triggerTime = setDate - 1800
+        trigger.setMinutes(timeMin-30)
+        setBody('in 30 min!')
         break
       case "1 hour before":
-        triggerTime = setDate - 3600
+        trigger.setMinutes(timeMin-60)
+        setBody('in 1 hour!')
         break
       case "2 hours before":
-        triggerTime = setDate - 7200
+        trigger.setMinutes(timeMin-120)
+        setBody('in 2 hours!')
         break
       case "1 day before":
-        triggerTime = setDate - 86400
+        trigger.setDate(dateDay-1)
+        setBody('is tomorrow!')
         break
       case "2 days before":
-        triggerTime = setDate - 172800
+        trigger.setDate(dateDay-2)
+        setBody('in 2 days!')
         break
       default:
-        triggerTime = 0
+        setBody('in your reminders!')
     }
-    return triggerTime
   }
+  const triggerTimer = (reminderTime) => {
+    trigger.setFullYear(dateYear)
+    trigger.setMonth(dateMonth)
+    trigger.setDate(dateDay)
+    trigger.setHours(timeHr)
+    trigger.setMinutes(timeMin)
+    trigger.setSeconds(trigger.getSeconds()+5)
+    switch (reminderTime) {
+      case "At time of event":
+        setBody('right now!')
+      case "15 min before":
+        setBody('in 15 min!')
+        trigger.setMinutes(timeMin-15)
+        break
+      case "30 min before":
+        trigger.setMinutes(timeMin-30)
+        setBody('in 30 min!')
+        break
+      case "1 hour before":
+        trigger.setMinutes(timeMin-60)
+        setBody('in 1 hour!')
+        break
+      case "2 hours before":
+        trigger.setMinutes(timeMin-120)
+        setBody('in 2 hours!')
+        break
+      case "1 day before":
+        trigger.setDate(dateDay-1)
+        setBody('is tomorrow!')
+        break
+      case "2 days before":
+        trigger.setDate(dateDay-2)
+        setBody('in 2 days!')
+        break
+      default:
+        setBody('in your reminders!')
+    }
+  }
+  async function testTriggerNotification() {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Productivity Planner REMINDER 📬",
+        body: `${title} is ${body}`,
+        'content-available': 1,
+        data: { data: 'some data' },
+      },
+      trigger: { seconds: 1}
+    });
+  };
+
+  async function triggerNotification() {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Productivity Planner REMINDER 📬",
+        body: `${title} is ${body}`,
+        'content-available': 1,
+        data: { data: 'some data' },
+      },
+      trigger,
+    });
+  };
 
   const createDate = (dateObj, timeObj) => {
     fullDate.setFullYear(dateObj.getFullYear())
@@ -136,7 +212,7 @@ const NewTask = (props) => {
         />
         <Dropdown
           data={["At time of event", "15 min before", "30 min before", "1 hour before", "2 hours before", "1 day before", "2 days before"]}
-          set={reminderTime}
+          set={setReminderTime}
           changeFlag={setReminder}
           defaultButtonText="Remind me"
           buttonStyle={{
@@ -164,6 +240,14 @@ const NewTask = (props) => {
         />
 
         <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.testNotification}
+            onPress={() => {
+              triggerButton(reminderTime)
+              testTriggerNotification()
+            }}>
+            <Text>Test Notification</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
@@ -321,6 +405,9 @@ const NewTask = (props) => {
               setDuration(0)
               setReminder(false)
               storeData()
+              
+              triggerTimer(reminderTime)
+              triggerNotification()
             }}>
             <Text>OK</Text>
           </TouchableOpacity>
@@ -334,6 +421,14 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#2196F3',
     width: 50,
+    height: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 5,
+  },
+  testNotification: {
+    backgroundColor: 'lightblue',
+    width: 130,
     height: 35,
     justifyContent: 'center',
     alignItems: 'center',
