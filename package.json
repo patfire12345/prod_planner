@@ -28,7 +28,8 @@
     "react-native-web": "~0.13.12",
     "react-native-weekly-calendar": "^0.2.0",
     "react-redux": "^7.2.6",
-    "redux": "^4.1.2"
+    "redux": "^4.1.2",
+    "expo-permissions": "~12.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
