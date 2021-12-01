@@ -72,7 +72,7 @@ const NewTask = (props) => {
         break
       case "1 day before":
         trigger.setDate(dateDay-1)
-        setBody('is tomorrow!')
+        setBody('tomorrow!')
         break
       case "2 days before":
         trigger.setDate(dateDay-2)
@@ -110,7 +110,7 @@ const NewTask = (props) => {
         break
       case "1 day before":
         trigger.setDate(dateDay-1)
-        setBody('is tomorrow!')
+        setBody('tomorrow!')
         break
       case "2 days before":
         trigger.setDate(dateDay-2)
@@ -282,7 +282,7 @@ const NewTask = (props) => {
             onPress={() => {
               triggerButton(reminderTime)
               testTriggerNotification()
-              registerForPushNotificationsAsync()
+              //registerForPushNotificationsAsync()
             }}>
             <Text>Test Notification</Text>
           </TouchableOpacity>
@@ -446,7 +446,7 @@ const NewTask = (props) => {
               
               triggerTimer(reminderTime)
               triggerNotification()
-              registerForPushNotificationsAsync()
+              //registerForPushNotificationsAsync()
             }}>
             <Text>OK</Text>
           </TouchableOpacity>
