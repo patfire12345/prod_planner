@@ -18,6 +18,13 @@ import TimePicker from './TimePicker'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import ColorPickerWheel from './ColorPickerWheel'
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+})
 // Modal that creates a new task for the users
 const NewTask = (props) => {
   const [title, setTitle] = useState('')
@@ -136,7 +143,36 @@ const NewTask = (props) => {
       trigger,
     });
   };
-
+  async function registerForPushNotificationsAsync() {
+    let token
+    if (Constants.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync()
+      let finalStatus = existingStatus
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync()
+        finalStatus = status
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!')
+        return
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data
+      console.log(token)
+    } else {
+      alert('Must use physical device for Push Notifications')
+    }
+  
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      })
+    }
+  
+    return token
+  }
   const createDate = (dateObj, timeObj) => {
     fullDate.setFullYear(dateObj.getFullYear())
     fullDate.setMonth(dateObj.getMonth())
@@ -245,6 +281,7 @@ const NewTask = (props) => {
             onPress={() => {
               triggerButton(reminderTime)
               testTriggerNotification()
+              registerForPushNotificationsAsync()
             }}>
             <Text>Test Notification</Text>
           </TouchableOpacity>
@@ -408,6 +445,7 @@ const NewTask = (props) => {
               
               triggerTimer(reminderTime)
               triggerNotification()
+              registerForPushNotificationsAsync()
             }}>
             <Text>OK</Text>
           </TouchableOpacity>
