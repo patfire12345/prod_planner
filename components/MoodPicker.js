@@ -9,16 +9,22 @@ const MoodPicker = (props) => {
     const goodCountPress = () => {
         props.showMoodModal(false)
         props.setGoodCount(props.goodCount+1)
+        props.setMoodIcon('smile-circle')
+        props.setMoodColor('#058ED9')
         saveGoodMood()
     }
     const averageCountPress = () => {
         props.showMoodModal(false)
         props.setAverageCount(props.averageCount+1)
+        props.setMoodIcon('meho')
+        props.setMoodColor("#848FA2")
         saveAverageMood()
     }
     const badCountPress = () => {
         props.showMoodModal(false)
         props.setBadCount(props.badCount+1)
+        props.setMoodIcon('frown')
+        props.setMoodColor("#CC2D35")
         saveBadMood()
     }
     const saveGoodMood = async () => {
@@ -79,6 +85,8 @@ const MoodPicker = (props) => {
         props.setAverageCount(0)
         props.setBadCount(0)
         props.showMoodModal(false)
+        props.setMoodColor('grey')
+        props.setMoodIcon('rest')
     }
 
     useEffect(() =>{
@@ -104,8 +112,6 @@ const MoodPicker = (props) => {
             </View>
             <View style={styles.moodModalContent}>
             <Text style={{fontSize: 20}}>How do you feel today? </Text>
-            <MaterialIcons 
-                name="mood" size={30} color="purple" />
             </View>
             <View style={styles.moodModalContent}>
             <AntDesign 

@@ -8,7 +8,7 @@ import {
   Modal,
   ScrollView,
 } from 'react-native'
-import { MaterialIcons, Octicons } from '@expo/vector-icons'
+import { MaterialIcons, Octicons, AntDesign } from '@expo/vector-icons'
 import Daily from './components/Daily'
 import Monthly from './components/Monthly'
 import NewTask from './components/NewTask'
@@ -32,6 +32,9 @@ export default function App() {
   const [goodCount, setGoodCount] = useState(0);
   const [averageCount, setAverageCount] = useState(0);
   const [badCount, setBadCount] = useState(0);
+  const [moodIcon, setMoodIcon] = useState('rest');
+  const [moodColor, setMoodColor] = useState('grey')
+
 
   const [dailyNewNote, setDailyNewNote] = useState('')
   const [dailyNewNoteButtonPressed, setDailyNewNoteButtonPressed] =
@@ -221,6 +224,16 @@ export default function App() {
           goodCount={goodCount}
           averageCount={averageCount}
           badCount={badCount}
+          moodIcon={moodIcon}
+          setMoodIcon={setMoodIcon}
+          moodColor={moodColor}
+          setMoodColor={setMoodColor}
+          // pressGood={pressGood}
+          // pressAverage={pressAverage}
+          // pressBad={pressBad}
+          // setPressGood={setPressGood}
+          // setPressAverage={setPressAverage}
+          // setPressBad={setPressBad}
           />
         <MoodStats
           visible={showMoodStats}
@@ -239,10 +252,10 @@ export default function App() {
         />
       </ScrollView>
       <View style={styles.addButtonContainer}>
-        <MaterialIcons 
-          name="mood" 
-          size={52} 
-          color="grey"
+        <AntDesign 
+          name={moodIcon} 
+          size={48} 
+          color={moodColor}
           onPress={() => {showMoodModal()}} 
         />
         <TouchableOpacity
