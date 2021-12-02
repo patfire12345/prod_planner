@@ -32,9 +32,9 @@ export default function App() {
   const [goodCount, setGoodCount] = useState(0);
   const [averageCount, setAverageCount] = useState(0);
   const [badCount, setBadCount] = useState(0);
+
   const [moodIcon, setMoodIcon] = useState('rest');
   const [moodColor, setMoodColor] = useState('grey')
-
 
   const [dailyNewNote, setDailyNewNote] = useState('')
   const [dailyNewNoteButtonPressed, setDailyNewNoteButtonPressed] =
@@ -228,12 +228,6 @@ export default function App() {
           setMoodIcon={setMoodIcon}
           moodColor={moodColor}
           setMoodColor={setMoodColor}
-          // pressGood={pressGood}
-          // pressAverage={pressAverage}
-          // pressBad={pressBad}
-          // setPressGood={setPressGood}
-          // setPressAverage={setPressAverage}
-          // setPressBad={setPressBad}
           />
         <MoodStats
           visible={showMoodStats}
@@ -247,7 +241,7 @@ export default function App() {
           />
         <Button
           title="Delete Everything!"
-          color="red"
+          color="#e32636"
           onPress={() => deleteData()}
         />
       </ScrollView>

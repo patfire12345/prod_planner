@@ -25,6 +25,7 @@ const MoodPicker = (props) => {
         props.setBadCount(props.badCount+1)
         props.setMoodIcon('frown')
         props.setMoodColor("#CC2D35")
+
         saveBadMood()
     }
     const saveGoodMood = async () => {
@@ -112,6 +113,8 @@ const MoodPicker = (props) => {
             </View>
             <View style={styles.moodModalContent}>
             <Text style={{fontSize: 20}}>How do you feel today? </Text>
+            <MaterialIcons 
+                name="mood" size={30} color="purple" />
             </View>
             <View style={styles.moodModalContent}>
             <AntDesign 
