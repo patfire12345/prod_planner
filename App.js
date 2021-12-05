@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import {
   Button,
   StyleSheet,
@@ -16,6 +16,9 @@ import Weekly from './components/Weekly'
 import MoodPicker from './components/MoodPicker'
 import MoodStats from './components/MoodStats'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import * as Notifications from 'expo-notifications'
+import { Notification } from './components/Notifications'
+
 
 // head component of the application
 export default function App() {
@@ -111,11 +114,11 @@ export default function App() {
 
         if (
           new Date(jsonKeyValuePair['date']).getDate() ===
-            new Date().getDate() &&
+          new Date().getDate() &&
           new Date(jsonKeyValuePair['date']).getMonth() ===
-            new Date().getMonth() &&
+          new Date().getMonth() &&
           new Date(jsonKeyValuePair['date']).getFullYear() ===
-            new Date().getFullYear()
+          new Date().getFullYear()
         ) {
           tempDailyTaskList.push({
             title: jsonKeyValuePair['title'],
@@ -123,22 +126,17 @@ export default function App() {
           })
         }
         tempWeeklyEventsList.push({
-          start: `${new Date(jsonKeyValuePair['date']).getFullYear()}-${
-            new Date(jsonKeyValuePair['date']).getMonth() + 1
-          }-${new Date(jsonKeyValuePair['date']).getDate()} ${
-            new Date(jsonKeyValuePair['date']).getHours() < 10 ? 0 : ''
-          }${new Date(jsonKeyValuePair['date']).getHours()}:${
-            new Date(jsonKeyValuePair['date']).getMinutes() < 10 ? 0 : ''
-          }${new Date(jsonKeyValuePair['date']).getMinutes()}:00`,
-          duration: `${
-            Math.floor(jsonKeyValuePair['duration']) < 10
-              ? `${0}${Math.floor(jsonKeyValuePair['duration'])}`
-              : Math.floor(jsonKeyValuePair['duration'])
-          }:${
-            (jsonKeyValuePair['duration'] * 60) % 60 === 0
+          start: `${new Date(jsonKeyValuePair['date']).getFullYear()}-${new Date(jsonKeyValuePair['date']).getMonth() + 1
+            }-${new Date(jsonKeyValuePair['date']).getDate()} ${new Date(jsonKeyValuePair['date']).getHours() < 10 ? 0 : ''
+            }${new Date(jsonKeyValuePair['date']).getHours()}:${new Date(jsonKeyValuePair['date']).getMinutes() < 10 ? 0 : ''
+            }${new Date(jsonKeyValuePair['date']).getMinutes()}:00`,
+          duration: `${Math.floor(jsonKeyValuePair['duration']) < 10
+            ? `${0}${Math.floor(jsonKeyValuePair['duration'])}`
+            : Math.floor(jsonKeyValuePair['duration'])
+            }:${(jsonKeyValuePair['duration'] * 60) % 60 === 0
               ? '00'
               : (jsonKeyValuePair['duration'] * 60) % 60
-          }:00`,
+            }:00`,
           note: jsonKeyValuePair['title'],
         })
 
@@ -164,7 +162,7 @@ export default function App() {
   }, [])
 
   return (
-    <View style ={styles.container}>
+    <View style={styles.container}>
       <View style={styles.buttonContainer}>
         <Button
           title="Monthly"
@@ -214,6 +212,9 @@ export default function App() {
           addToTaskList={addToDailyTaskList}
           addToWeeklyEventsList={addToWeeklyEventsList}
           addToMarkedDates={addToMarkedDates}
+          reminder={reminder}
+          reminderBody={reminderBody}
+          reminderTime={reminderTime}
         />
         <MoodPicker
           visible={showMood}
@@ -257,7 +258,7 @@ export default function App() {
           onPress={() => {
             showNewTaskModal()
           }}>
-          <Text style={{fontSize:28,color:"white",}}>+</Text>
+          <Text style={{ fontSize: 20, color: "white", }}>+</Text>
         </TouchableOpacity>
         <Octicons 
           name="graph" 
@@ -284,7 +285,7 @@ const styles = StyleSheet.create({
   tasksWrapper: {
     paddingTop: 5,
     paddingHorizontal: 20,
-    zIndex:2
+    zIndex: 2
   },
   buttonContainer: {
     flexDirection: 'row',
